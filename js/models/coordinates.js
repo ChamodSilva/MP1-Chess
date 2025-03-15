@@ -1,0 +1,78 @@
+
+// #region [Standard Coordinates]
+export const coords =
+{
+    // Rank 8 (Row 8)
+    A8: {row:0, col:0},
+    B8: {row:0, col:1},
+    C8: {row:0, col:2},
+    D8: {row:0, col:3},
+    E8: {row:0, col:4},
+    F8: {row:0, col:5},
+    G8: {row:0, col:6},
+    H8: {row:0, col:7},
+    // Rank 7 (Row 7)
+    A7: {row:1, col:0},
+    B7: {row:1, col:1},
+    C7: {row:1, col:2},
+    D7: {row:1, col:3},
+    E7: {row:1, col:4},
+    F7: {row:1, col:5},
+    G7: {row:1, col:6},
+    H7: {row:1, col:7},
+    // Rank 6 (Row 6)
+    A6: {row:2, col:0},
+    B6: {row:2, col:1},
+    C6: {row:2, col:2},
+    D6: {row:2, col:3},
+    E6: {row:2, col:4},
+    F6: {row:2, col:5},
+    G6: {row:2, col:6},
+    H6: {row:2, col:7},
+    // Rank 5 (Row 5)
+    A5: {row:3, col:0},
+    B5: {row:3, col:1},
+    C5: {row:3, col:2},
+    D5: {row:3, col:3},
+    E5: {row:3, col:4},
+    F5: {row:3, col:5},
+    G5: {row:3, col:6},
+    H5: {row:3, col:7},
+    //:ank 4 (Row 4)
+    A4: {row:4, col:0},
+    B4: {row:4, col:1},
+    C4: {row:4, col:2},
+    D4: {row:4, col:3},
+    E4: {row:4, col:4},
+    F4: {row:4, col:5},
+    G4: {row:4, col:6},
+    H4: {row:4, col:7},
+    // Rank 3 (Row 3)
+    A3: {row:5, col:0},
+    B3: {row:5, col:1},
+    C3: {row:5, col:2},
+    D3: {row:5, col:3},
+    E3: {row:5, col:4},
+    F3: {row:5, col:5},
+    G3: {row:5, col:6},
+    H3: {row:5, col:7},
+    // Rank 2 (Row 2)
+    A2: {row:6, col:0},
+    B2: {row:6, col:1},
+    C2: {row:6, col:2},
+    D2: {row:6, col:3},
+    E2: {row:6, col:4},
+    F2: {row:6, col:5},
+    G2: {row:6, col:6},
+    H2: {row:6, col:7},
+    // Rank 1 (Row 1)
+    A1: {row:7, col:0},
+    B1: {row:7, col:1},
+    C1: {row:7, col:2},
+    D1: {row:7, col:3},
+    E1: {row:7, col:4},
+    F1: {row:7, col:5},
+    G1: {row:7, col:6},
+    H1: {row:7, col:7},
+}
+// #endregion
