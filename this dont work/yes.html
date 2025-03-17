@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootstrap Chessboard Grid</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .chessboard-cell {
+        aspect-ratio: 1 / 1;
+        display: flex; /* Make cells flex containers */
+        justify-content: center;
+        align-items: center;
+        border: 1px solid #ccc; /* Add a border for visibility */
+        }
+        .white {
+        background-color: #f0d9b5;
+        }
+        .black {
+        background-color: #b58863;
+        }
+    </style>
+    </head>
+    <body>
+        <header>
+            <nav class="navbar bg-body-tertiary">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="/test.html">
+                    Working
+                    </a>
+                </div>
+            </nav>
+        </header>
+        <div class="container mt-4">
+            <div id="chessboard-container"></div>
+        </div>
+        <script src="yes.js"></script>
+    </body>
+</html>

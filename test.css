@@ -1,0 +1,32 @@
+.cell
+{
+    aspect-ratio: 1 / 1;
+    display: flex; /* Make cells flex containers */
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black; /* Add a border for visibility */
+}
+
+.light
+{
+    background-color: azure;
+}
+
+.dark
+{
+    background-color: lightskyblue;
+}
+
+.piece-white
+{
+    size: 50%;
+    color: red;
+    border-radius: 50%;
+}
+
+.piece-light
+{
+    size: 50%;
+    color: yellow;
+    border-radius: 50%;
+}
