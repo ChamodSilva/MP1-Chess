@@ -1,3 +1,15 @@
+.container
+{
+    max-height: 900px;
+    max-width: 900px;
+}
+
+.rowth
+{
+    padding: 10px;
+    justify-self: center;
+}
+
 .cell
 {
     aspect-ratio: 1 / 1;
@@ -17,16 +29,33 @@
     background-color: lightskyblue;
 }
 
-.piece-white
+.piece
 {
-    size: 50%;
-    color: red;
+    height: 50%;
+    width: 50%;
+    border: 2px solid;
+    align-content: center;
+    text-align: center;
+}
+
+.path-marker
+{
+    height: 25%;
+    width: 25%;
+    border: 5px solid green;
+    align-content: center;
+}
+
+.white
+{
+    color: black;
+    background-color: white;
     border-radius: 50%;
 }
 
-.piece-light
+.black
 {
-    size: 50%;
-    color: yellow;
+    color: white;
+    background-color: black;
     border-radius: 50%;
 }

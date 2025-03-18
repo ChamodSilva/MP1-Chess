@@ -1,30 +1,80 @@
 const letters = ["A", "B", "C", "D", "E", "F", "G", "H"];
 const numbers = ["1", "2", "3", "4", "5", "6", "7", "8"];
+const BLACK = "black";
+const WHITE = "white";
+const pieceMoveSet =
+{
+	north: {row:-1, row:0},
+	north: -north,
+	east: {row:0, col:1},
+	west: -east,
+}
 
 class Piece
 {
-	constructor(name, position)
+	constructor(board ,name, isWhite, position, visualize = true)
 	{
+		this.board = board;
 		this.name = name;
+		this.isWhite = isWhite;
+		this.colour = isWhite ? WHITE : BLACK;
+		this.type = "piece";
+		this.sprite = visualize ? this.renderSprite() : null;
 		this.position = position;
-		this.coords = this.getCoords();
+
+
+		this.coords = this.convertToCoords(position);
+		this.prePosition = null;
+		this.preCoords = null;
 	}
 
-	getCoords()
+	convertToCoords(rowCol)
 	{
-		let coords = `${letters[this.position.col]}${numbers[this.position.row]}`;
+		let coords = `${letters[rowCol.col]}${numbers[rowCol.row]}`;
 		return coords;
+	}
+
+	renderSprite()
+	{
+		const sprite = document.createElement("div");
+		sprite.classList.add(this.colour, this.type);
+		sprite.innerText = this.name;
+		console.log(`${this.name} has been rendered.`)
+		return sprite;
+	}
+
+	possibleMoves()
+	{
+
+	}
+
+	moveValidation(move)
+	{
+		return true;
+	}
+
+	movePiece(move)
+	{
+		if(moveValidation(move))
+		{
+			this.prePosition = this.position;
+			this.preCoords = this.coords
+			this.position = move;
+		}
+		else
+		{
+			console.log(`You cannot move ${this.name} to cell ${letters[this.move.col]}${numbers[this.move.row]}`)
+		}
 	}
 }
   
 class ChessBoard
 {
-	constructor(containerID, size)
+	constructor(containerID, size, visualize = true)
 	{
-		this.boardUI = document.getElementById(containerID);
 		this.size = size;
 		this.board = this.buildBoard();
-		console.log(`Created a ${size} x ${size} board.`);
+		this.boardUI = visualize ? this.renderBoard(containerID) : null;
 	}
 
 	buildBoard()
@@ -40,12 +90,14 @@ class ChessBoard
 			}
 			board.push(row);
 		}
+		console.log(`Created a ${this.size} x ${this.size} board.`);
 		return board;
 	}
 
-	renderBoard()
+	renderBoard(containerID)
 	{
-		console.log("started renderBoard()");
+		const boardUI = document.createElement("div");
+		boardUI.id = containerID;
 		for(let row = 0; row < this.size; row++)
 		{
 			const rowDiv = document.createElement("div");
@@ -67,13 +119,27 @@ class ChessBoard
 				cell.id = `${letters[col]}${numbers[(numbers.length - 1) - row]}`;
 				rowDiv.appendChild(cell)
 			}
-			this.boardUI.appendChild(rowDiv);
+			boardUI.appendChild(rowDiv);
 		}
+		document.getElementById("gameview").appendChild(boardUI);
+		console.log(`${containerID} board has been rendered.`);
+		return boardUI;
 	}
 
-	updateBoard()
+	updateBoard(target)
 	{
-
+		document.getElementById(target.coords).appendChild(target.sprite);
+		
+		if(target.prePosition)
+		{
+			document.getElementById(target.preCoords).getElementsByClassName(target.colour).remove();
+			console.log(`${target.name} has moved from cell ${target.preCoords} to ${target.coords}.`);
+		}
+		else
+		{
+			console.log(`${target.name} has been set.`)
+		}
+		
 	}
 
 	displayBoardASCII()
@@ -84,11 +150,21 @@ class ChessBoard
 		}
 	}
 
+	setPieces(pieces)
+	{
+		for(let piece of pieces)
+		{
+			this.board[piece.position.row][piece.position.col] = piece;
+			console.log(`${piece.name} has been set at row: ${piece.position.row + 1}, column: ${piece.position.col + 1}`);
+			this.updateBoard(piece);
+		}
+	}
+
 	setPiece(target)
 	{
 		this.board[target.position.row][target.position.col] = target;
 		console.log(`${target.name} has been set at row: ${target.position.row + 1}, column: ${target.position.col + 1}`);
-		this.updateBoard();
+		this.updateBoard(target);
 	}
 }
 
@@ -130,31 +206,24 @@ function moveObject(array2D, targetObject, newRow, newCol)
 	}
 }
 
-// Example usage
-let myArray2D =
-[
-	[null, null, null, null, null, null],
-	[null, null, null, null, null, null],
-	[null, null, null, null, null, null],
-	[null, null, null, null, null, null],
-	[null, null, null, null, null, null],
-	[null, null, null, null, null, null],
-];
-
-const boardContainerID = "board-container";
-const jeff = new Piece("Jeff", {row:2, col:2});
-const aryn = new Piece("Aryn", {row:1, col:2});
 
 document.addEventListener("DOMContentLoaded", () =>
 {
-	const game1 = new ChessBoard(boardContainerID, 8);
-	game1.renderBoard();
-	game1.displayBoardASCII();
-	game1.setPiece(jeff);
-	game1.setPiece(aryn);
-	console.log(aryn.getCoords());
-});
+	const game1 = new ChessBoard("Game", 8);
+	const pieces =
+	[
+		aryn = new Piece(game1, "Aryn", true, {row:0, col:4}),
 
+		jeff = new Piece(game1, "Jeff", false, {row:7, col:4}),		
+	];
+	game1.setPieces(pieces);
+	game1.displayBoardASCII();
+
+	const c1 = {row: 1, col:2};
+	const c2 = {row:-1, col:-2};
+
+	console.log(`${c1.row} + ${c2.row} = ${c1.row + c2.row}`);
+});
 
 //   let target = myArray2D[0][2]; // Get the object instance
   
