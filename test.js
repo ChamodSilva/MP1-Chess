@@ -268,9 +268,11 @@ userPosition = move(userPosition, pieceMoveSet.east);
 userPosition = move(userPosition, pieceMoveSet.east);
 userPosition = move(userPosition, pieceMoveSet.east);
 
+
+
 for (let direction in pieceMoveSet)
 {
-	console.log(direction.valueOf);
+	console.log(direction);
 }
 
 console.log(userPosition);
