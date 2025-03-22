@@ -2,6 +2,8 @@ const letters = ["A", "B", "C", "D", "E", "F", "G", "H"];
 const numbers = ["1", "2", "3", "4", "5", "6", "7", "8"];
 const BLACK = "black";
 const WHITE = "white";
+const PATH_MARKER = "path-marker";
+
 const pieceMoveSet =
 {
 	north: {row:-1, col:0},
@@ -24,20 +26,14 @@ class Piece
 		this.sprite = visualize ? this.renderSprite() : null;
 		this.position = position;
 
-
 		this.coords = this.convertToCoords(position);
 		this.prePosition = null;
 		this.preCoords = null;
 
 		this.pieceStamina = 1;
-		this.pieceMoveSet =
-			{
-				north: {row:-1, row:0},
-				south: {row: 1, row:0},
-				east: {row:0, col:1},
-				west: {row:0, col:-1},
-			}
+		this.moveSet = pieceMoveSet;
 		this.possibleMoves = this.getPossibleMoves();
+		this.moveMarkers = this.getMoveMarkers();
 	}
 
 	convertToCoords(rowCol)
@@ -61,21 +57,39 @@ class Piece
 		let possiblePosition = null;
 		for(let step = 0; step < this.pieceStamina; step++)
 		{
-			for(let move in this.pieceMoveSet)
+			for(let direction in this.moveSet)
 			{
-				console.log(move.key);
-				possiblePosition = {row: this.position.row + (move.row * step), col: this.position.col + (move.col * step)};
+				console.log(this.moveSet[direction]);
+				possiblePosition = {row: this.position.row + (this.moveSet[direction].row * (step + 1)), col: this.position.col + (this.moveSet[direction].row * (step + 1))};
+				console.log(possiblePosition);
 				possibleMoves.push(possiblePosition);
 			}
 		}
-		console.log("Moves:")
-		console.log(possibleMoves)
 		return possibleMoves;
 	}
 
-	renderPossibleMoves()
+	getMoveMarkers()
 	{
+		let moveMarkers = [];
+		for(let marker = 0; marker < this.possibleMoves.length; marker++)
+		{
+			const markerSprite = document.createElement("div");
+			markerSprite.classList.add(PATH_MARKER);
+			moveMarkers.push(markerSprite);
+		}
+		console.log(moveMarkers);
+		return moveMarkers;
+	}
 
+	getPathCoords()
+	{
+		let pathCoords = [];
+		for(let marker of this.possibleMoves)
+		{
+			let coords = `${letters[marker.col]}${numbers[marker.row]}`;
+			pathCoords.push(coords);
+		}
+		console.log(pathCoords);
 	}
 
 	moveValidation(move)
@@ -169,7 +183,6 @@ class ChessBoard
 		{
 			console.log(`${target.name} has been set.`)
 		}
-		
 	}
 
 	displayBoardASCII()
@@ -195,6 +208,21 @@ class ChessBoard
 		this.board[target.position.row][target.position.col] = target;
 		console.log(`${target.name} has been set at row: ${target.position.row + 1}, column: ${target.position.col + 1}`);
 		this.updateBoard(target);
+	}
+
+	selectPiece(targert)
+	{
+		document.getElementById(target.coords).appendChild(target.sprite);
+		
+		if(target.prePosition)
+		{
+			document.getElementById(target.preCoords).getElementsByClassName(target.colour).remove();
+			console.log(`${target.name} has moved from cell ${target.preCoords} to ${target.coords}.`);
+		}
+		else
+		{
+			console.log(`${target.name} has been set.`)
+		}
 	}
 }
 
@@ -260,22 +288,6 @@ function move(targert, move)
 	const newPosition = {row: targert.row + move.row, col: targert.col + move.col};
 	return newPosition;
 }
-
-console.log(userPosition);
-
-userPosition = move(userPosition, pieceMoveSet.east);
-userPosition = move(userPosition, pieceMoveSet.east);
-userPosition = move(userPosition, pieceMoveSet.east);
-userPosition = move(userPosition, pieceMoveSet.east);
-
-
-
-for (let direction in pieceMoveSet)
-{
-	console.log(direction);
-}
-
-console.log(userPosition);
 
 //   let target = myArray2D[0][2]; // Get the object instance
   
