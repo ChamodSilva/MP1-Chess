@@ -1,5 +1,5 @@
-const letters = ["A", "B", "C", "D", "E", "F", "G", "H"];
-const numbers = ["1", "2", "3", "4", "5", "6", "7", "8"];
+const LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H"];
+const NUMBERS = ["1", "2", "3", "4", "5", "6", "7", "8"];
 const BLACK = "black";
 const WHITE = "white";
 const PATH_MARKER = "path-marker";
@@ -7,9 +7,13 @@ const PATH_MARKER = "path-marker";
 const pieceMoveSet =
 {
 	north: {row:-1, col:0},
-	south: {row: 1, col:0},
-	east: {row: 0, col:1},
-	west: {row: 0, col:-1},
+	south: {row:1, col:0},
+	east: {row:0, col:1},
+	west: {row:0, col:-1},
+	northEast: {row:-1, col:1},
+	northWest: {row:-1, col:-1},
+	southWest: {row:1, col:-1},
+	southEast: {row:1 , col:1}
 }
 
 let userPosition = {row: 4, col: 2};
@@ -34,11 +38,13 @@ class Piece
 		this.moveSet = pieceMoveSet;
 		this.possibleMoves = this.getPossibleMoves();
 		this.moveMarkers = this.getMoveMarkers();
+		this.markerElements = null;
+		this.pathCoords = this.getPathCoords();
 	}
 
 	convertToCoords(rowCol)
 	{
-		let coords = `${letters[rowCol.col]}${numbers[rowCol.row]}`;
+		let coords = `${LETTERS[rowCol.col]}${NUMBERS[rowCol.row]}`;
 		return coords;
 	}
 
@@ -59,10 +65,16 @@ class Piece
 		{
 			for(let direction in this.moveSet)
 			{
-				console.log(this.moveSet[direction]);
-				possiblePosition = {row: this.position.row + (this.moveSet[direction].row * (step + 1)), col: this.position.col + (this.moveSet[direction].row * (step + 1))};
-				console.log(possiblePosition);
-				possibleMoves.push(possiblePosition);
+				possiblePosition = 
+				{
+					row: this.position.row + (this.moveSet[direction].row * (step + 1)),
+					col: this.position.col + (this.moveSet[direction].col * (step + 1))
+				};
+				
+				if(this.isMoveValid(possiblePosition))
+				{
+					possibleMoves.push(possiblePosition);
+				}
 			}
 		}
 		return possibleMoves;
@@ -77,7 +89,6 @@ class Piece
 			markerSprite.classList.add(PATH_MARKER);
 			moveMarkers.push(markerSprite);
 		}
-		console.log(moveMarkers);
 		return moveMarkers;
 	}
 
@@ -86,15 +97,25 @@ class Piece
 		let pathCoords = [];
 		for(let marker of this.possibleMoves)
 		{
-			let coords = `${letters[marker.col]}${numbers[marker.row]}`;
+			let coords = `${LETTERS[marker.col]}${NUMBERS[marker.row]}`;
 			pathCoords.push(coords);
 		}
 		console.log(pathCoords);
+		return pathCoords;
 	}
 
-	moveValidation(move)
+	isMoveValid(move)
 	{
-		return true;
+		let moveIsValid = false;
+		if(move.row >= 0 && move.row < this.board.size)
+		{
+			if(move.col >= 0 && move.col < this.board.size)
+			{
+				moveIsValid = true;
+			}
+		}
+		moveIsValid ? console.log(`The move: {row: ${move.row}, col: ${move.col} is a valid move.`) : console.log(`The move: {row: ${move.row}, col: ${move.col} is NOT a valid move.`)
+		return moveIsValid;
 	}
 
 	movePiece(move)
@@ -107,7 +128,7 @@ class Piece
 		}
 		else
 		{
-			console.log(`You cannot move ${this.name} to cell ${letters[this.move.col]}${numbers[this.move.row]}`)
+			console.log(`You cannot move ${this.name} to cell ${LETTERS[this.move.col]}${NUMBERS[this.move.row]}`)
 		}
 	}
 }
@@ -119,6 +140,10 @@ class ChessBoard
 		this.size = size;
 		this.board = this.buildBoard();
 		this.boardUI = visualize ? this.renderBoard(containerID) : null;
+		this.cellUI = this.makeClickable();
+		this.selected = null;
+		this.prevSelected = null;
+		this.selectedPieceOptions = null;
 	}
 
 	buildBoard()
@@ -136,6 +161,53 @@ class ChessBoard
 		}
 		console.log(`Created a ${this.size} x ${this.size} board.`);
 		return board;
+	}
+
+	select(target)
+	{
+		const targetFile = target[0];
+		const targetRank = target[1];
+		let row = null;
+		let col = null;
+		for(let letter in LETTERS)
+		{
+			if(targetFile === LETTERS[letter])
+			{
+				col = letter;
+			}
+			for(let number in NUMBERS)
+			{
+				if(targetFile === LETTERS[letter] && targetRank === NUMBERS[number])
+				{
+					col = letter;
+					row = number;
+				}
+			}
+		}
+		let selection = this.board[row][col];
+		if(selection != this.selected)
+		{
+			this.prevSelected = this.selected;
+			this.removeMarkers();
+		}
+		this.selected = selection;
+		this.selectPiece(target);
+	}
+
+	makeClickable()
+	{
+		for(let letter of LETTERS)
+		{
+			for(let number of NUMBERS)
+			{
+				let cell = this.boardUI.querySelector(`#${letter}${number}`);
+				cell.addEventListener("click", (event) =>
+				{
+					console.log(`Clicked on: ${cell.id}`);
+					this.select(cell.id);
+				});
+			}
+		}
 	}
 
 	renderBoard(containerID)
@@ -160,8 +232,8 @@ class ChessBoard
 				{
 					cell.classList.add("dark");
 				}
-				cell.id = `${letters[col]}${numbers[(numbers.length - 1) - row]}`;
-				rowDiv.appendChild(cell)
+				cell.id = `${LETTERS[col]}${NUMBERS[(NUMBERS.length - 1) - row]}`;
+				rowDiv.appendChild(cell);
 			}
 			boardUI.appendChild(rowDiv);
 		}
@@ -198,7 +270,7 @@ class ChessBoard
 		for(let piece of pieces)
 		{
 			this.board[piece.position.row][piece.position.col] = piece;
-			console.log(`${piece.name} has been set at row: ${piece.position.row + 1}, column: ${piece.position.col + 1}`);
+			console.log(`${piece.name} has been set at ${piece.coords}`);
 			this.updateBoard(piece);
 		}
 	}
@@ -210,19 +282,44 @@ class ChessBoard
 		this.updateBoard(target);
 	}
 
-	selectPiece(targert)
+	removeMarkers()
 	{
-		document.getElementById(target.coords).appendChild(target.sprite);
-		
-		if(target.prePosition)
+		const markers = this.boardUI.querySelectorAll(`.${PATH_MARKER}`);
+		for(let marker of markers)
 		{
-			document.getElementById(target.preCoords).getElementsByClassName(target.colour).remove();
-			console.log(`${target.name} has moved from cell ${target.preCoords} to ${target.coords}.`);
+			marker.remove();
+		}
+		console.log("Cleared markers")
+	}
+
+	selectPiece(target)
+	{
+		if(this.selected)
+		{
+			let selectedPieceOptions = [];
+			for(let marker = 0; marker < this.selected.possibleMoves.length; marker++)
+			{
+				selectedPieceOptions.push(this.selected.pathCoords[marker]);
+				document.getElementById(this.selected.pathCoords[marker]).appendChild(this.selected.moveMarkers[marker]);
+				this.selectedPieceOptions = selectedPieceOptions;
+				console.log(selectedPieceOptions);
+			}
 		}
 		else
 		{
-			console.log(`${target.name} has been set.`)
+			console.log(`At ${target}, there is no piece to select.`);
 		}
+
+		
+		// if(target.prePosition)
+		// {
+		// 	document.getElementById(target.preCoords).getElementsByClassName(target.colour).remove();
+		// 	console.log(`${target.name} has moved from cell ${target.preCoords} to ${target.coords}.`);
+		// }
+		// else
+		// {
+		// 	console.log(`${target.name} has been set.`)
+		// }
 	}
 }
 
@@ -283,12 +380,8 @@ document.addEventListener("DOMContentLoaded", () =>
 	console.log(`${c1.row} + ${c2.row} = ${c1.row + c2.row}`);
 });
 
-function move(targert, move)
-{
-	const newPosition = {row: targert.row + move.row, col: targert.col + move.col};
-	return newPosition;
-}
 
+const potato = ["yes", "IDK", "LoL", "LMFAO"];
 //   let target = myArray2D[0][2]; // Get the object instance
   
 //   // Move the object to [3][4]
