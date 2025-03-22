@@ -4,11 +4,13 @@ const BLACK = "black";
 const WHITE = "white";
 const pieceMoveSet =
 {
-	north: {row:-1, row:0},
-	north: -north,
-	east: {row:0, col:1},
-	west: -east,
+	north: {row:-1, col:0},
+	south: {row: 1, col:0},
+	east: {row: 0, col:1},
+	west: {row: 0, col:-1},
 }
+
+let userPosition = {row: 4, col: 2};
 
 class Piece
 {
@@ -26,6 +28,16 @@ class Piece
 		this.coords = this.convertToCoords(position);
 		this.prePosition = null;
 		this.preCoords = null;
+
+		this.pieceStamina = 1;
+		this.pieceMoveSet =
+			{
+				north: {row:-1, row:0},
+				south: {row: 1, row:0},
+				east: {row:0, col:1},
+				west: {row:0, col:-1},
+			}
+		this.possibleMoves = this.getPossibleMoves();
 	}
 
 	convertToCoords(rowCol)
@@ -43,7 +55,25 @@ class Piece
 		return sprite;
 	}
 
-	possibleMoves()
+	getPossibleMoves()
+	{
+		let possibleMoves =[];
+		let possiblePosition = null;
+		for(let step = 0; step < this.pieceStamina; step++)
+		{
+			for(let move in this.pieceMoveSet)
+			{
+				console.log(move.key);
+				possiblePosition = {row: this.position.row + (move.row * step), col: this.position.col + (move.col * step)};
+				possibleMoves.push(possiblePosition);
+			}
+		}
+		console.log("Moves:")
+		console.log(possibleMoves)
+		return possibleMoves;
+	}
+
+	renderPossibleMoves()
 	{
 
 	}
@@ -224,6 +254,26 @@ document.addEventListener("DOMContentLoaded", () =>
 
 	console.log(`${c1.row} + ${c2.row} = ${c1.row + c2.row}`);
 });
+
+function move(targert, move)
+{
+	const newPosition = {row: targert.row + move.row, col: targert.col + move.col};
+	return newPosition;
+}
+
+console.log(userPosition);
+
+userPosition = move(userPosition, pieceMoveSet.east);
+userPosition = move(userPosition, pieceMoveSet.east);
+userPosition = move(userPosition, pieceMoveSet.east);
+userPosition = move(userPosition, pieceMoveSet.east);
+
+for (let direction in pieceMoveSet)
+{
+	console.log(direction.valueOf);
+}
+
+console.log(userPosition);
 
 //   let target = myArray2D[0][2]; // Get the object instance
   
