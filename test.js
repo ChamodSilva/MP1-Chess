@@ -381,7 +381,6 @@ document.addEventListener("DOMContentLoaded", () =>
 });
 
 
-const potato = ["yes", "IDK", "LoL", "LMFAO"];
 //   let target = myArray2D[0][2]; // Get the object instance
   
 //   // Move the object to [3][4]
