@@ -38,10 +38,15 @@
     text-align: center;
 }
 
+.target
+{
+    border-color: red;
+}
+
 .path-marker
 {
-    height: 25%;
-    width: 25%;
+    height: 75%;
+    width: 75%;
     border: 5px solid green;
     align-content: center;
 }

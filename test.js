@@ -1,8 +1,10 @@
+//#region [Constants]
 const LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H"];
 const NUMBERS = ["1", "2", "3", "4", "5", "6", "7", "8"];
 const BLACK = "black";
 const WHITE = "white";
 const PATH_MARKER = "path-marker";
+const TARGET = "target";
 
 const pieceMoveSet =
 {
@@ -17,7 +19,9 @@ const pieceMoveSet =
 }
 
 let userPosition = {row: 4, col: 2};
+//#endregion 
 
+//#region [Piece Class]
 class Piece
 {
 	constructor(board ,name, isWhite, position, visualize = true)
@@ -40,6 +44,9 @@ class Piece
 		this.moveMarkers = this.getMoveMarkers();
 		this.markerElements = null;
 		this.pathCoords = this.getPathCoords();
+		this.possibleAttacks = null;
+		this.attackMarkers = this.getAttackMarkers();
+		this.attackCoords = this.getAttackCoords();
 	}
 
 	convertToCoords(rowCol)
@@ -60,7 +67,9 @@ class Piece
 	getPossibleMoves()
 	{
 		let possibleMoves =[];
+		let possibleAttacks = [];
 		let possiblePosition = null;
+		let inRangeCell = null;
 		for(let step = 0; step < this.pieceStamina; step++)
 		{
 			for(let direction in this.moveSet)
@@ -73,11 +82,25 @@ class Piece
 				
 				if(this.isMoveValid(possiblePosition))
 				{
-					possibleMoves.push(possiblePosition);
+					inRangeCell = this.getInRangeCell(possiblePosition);
+					if(!inRangeCell)
+					{
+						possibleMoves.push(possiblePosition);
+					}
+					else if(inRangeCell.isWhite !== this.isWhite)
+					{
+						possibleAttacks.push(possiblePosition);
+					}
 				}
 			}
 		}
 		return possibleMoves;
+	}
+
+	getInRangeCell(move)
+	{
+		console.log(this.selected.board[move.row][move.col]);
+		return ;
 	}
 
 	getMoveMarkers()
@@ -92,6 +115,19 @@ class Piece
 		return moveMarkers;
 	}
 
+	getAttackMarkers()
+	{
+		let attackMarkers = [];
+		for(let marker = 0; marker < this.possibleAttacks.length; marker++)
+		{
+			const markerSprite = document.createElement("div");
+			markerSprite.classList.add(PATH_MARKER);
+			markerSprite.classList.add(TARGET)
+			attackMarkers.push(markerSprite);
+		}
+		return attackMarkers;
+	}
+
 	getPathCoords()
 	{
 		let pathCoords = [];
@@ -102,6 +138,24 @@ class Piece
 		}
 		console.log(pathCoords);
 		return pathCoords;
+	}
+
+	getAttackCoords()
+	{
+		let attackCoords = [];
+		if(this.possibleAttacks !== null)
+		{
+			for(let marker of this.possibleAttacks)
+			{
+				let coords = `${LETTERS[marker.col]}${NUMBERS[marker.row]}`;
+				attackCoords.push(coords)
+			}
+		}
+		else
+		{
+			attackCoords = null;
+		}
+		return attackCoords;		
 	}
 
 	isMoveValid(move)
@@ -132,7 +186,9 @@ class Piece
 		}
 	}
 }
+//#endregion
   
+//#region [ChessBoard Class]
 class ChessBoard
 {
 	constructor(containerID, size, visualize = true)
@@ -304,6 +360,12 @@ class ChessBoard
 				this.selectedPieceOptions = selectedPieceOptions;
 				console.log(selectedPieceOptions);
 			}
+			
+			for(let marker = 0; marker < this.selected.possibleAttacks.length; marker++)
+			{
+				selectedPieceOptions.push(this.selected.attackCoords[marker]);
+				document.getElementById(this.selected.attackCoords[marker]).appendChild(this.selected.attackMarkers[marker]);
+			}
 		}
 		else
 		{
@@ -322,7 +384,9 @@ class ChessBoard
 		// }
 	}
 }
+//#endregion
 
+//#region [Main]
 function moveObject(array2D, targetObject, newRow, newCol)
 {
 	// Find the current position of the target object
@@ -390,3 +454,4 @@ document.addEventListener("DOMContentLoaded", () =>
 //   for (let row of myArray2D) {
 // 	console.log(row);
 //   }
+//#endregion
